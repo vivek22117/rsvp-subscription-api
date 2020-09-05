@@ -127,3 +127,27 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+
+# .tfvars files
+
+# Intellij
+.idea/libraries/*.xml
+*.iml
+*.iws
+.idea/*
+
+.idea
+
+target/
+
+
+/target/**
