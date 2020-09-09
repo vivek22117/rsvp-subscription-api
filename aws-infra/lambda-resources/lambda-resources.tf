@@ -1,11 +1,11 @@
 ####################################################
 #adding the lambda archive to the defined bucket   #
 ####################################################
-resource "aws_s3_bucket_object" "kinesis_rsvp_publisher_package" {
+resource "aws_s3_bucket_object" "subscriber_api_package" {
   depends_on = ["data.archive_file.kinesis_rsvp_publisher_lambda_jar"]
 
   bucket = data.terraform_remote_state.backend.outputs.deploy_bucket_name
-  key    = var.kinesis_lambda_kinesis_bucket_key
+  key    = var.subscriber_api_lambda_bucket_key
   source = "${path.module}/../../KinesisPublisher/target/kinesis-rsvp-publisher-1.0.0-lambda.zip"
   etag   = filemd5("${path.module}/../../KinesisPublisher/target/kinesis-rsvp-publisher-1.0.0-lambda.zip")
 }
@@ -17,16 +17,16 @@ data "archive_file" "kinesis_rsvp_publisher_lambda_jar" {
 }
 
 
-resource "aws_lambda_function" "kinesis_rsvp_lambda_publisher" {
+resource "aws_lambda_function" "subscriber_api_lambda" {
   depends_on = ["aws_iam_role.k_lambda_k_role", "aws_iam_policy.kinesis_lambda_policy"]
 
   description = "Lambda function to publish RSVP records!"
 
-  function_name = var.kinesis_publisher_lambda
-  handler       = var.kinesis_publisher_lambda_handler
+  function_name = var.subscriber_api_lambda
+  handler       = var.subscriber_api_lambda_handler
 
-  s3_bucket = aws_s3_bucket_object.kinesis_rsvp_publisher_package.bucket
-  s3_key    = aws_s3_bucket_object.kinesis_rsvp_publisher_package.key
+  s3_bucket = aws_s3_bucket_object.subscriber_api_package.bucket
+  s3_key    = aws_s3_bucket_object.subscriber_api_package.key
 
   source_code_hash = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_base64sha256
   role             = aws_iam_role.k_lambda_k_role.arn
@@ -42,15 +42,14 @@ resource "aws_lambda_function" "kinesis_rsvp_lambda_publisher" {
     }
   }
 
-  tags = merge(local.common_tags, map("Name", "${var.environment}-rsvp-kinesis-publisher"))
+  tags = merge(local.common_tags, map("Name", "${var.environment}-rsvp-subscriber-api"))
 }
 
-resource "aws_lambda_event_source_mapping" "kinesis_lambda_event_mapping" {
-  depends_on = ["aws_iam_role.k_lambda_k_role", "aws_lambda_function.kinesis_rsvp_lambda_publisher"]
+resource "aws_lambda_permission" "allow_api_gateway" {
+  statement_id = "AllowExecutionFromApiGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.subscriber_api_lambda.arn
+  principal = "apigateway.amazonaws.com"
 
-  batch_size        = 100
-  event_source_arn  = data.terraform_remote_state.rsvp_lambda_kinesis.outputs.kinesis_arn
-  function_name     = aws_lambda_function.kinesis_rsvp_lambda_publisher.arn
-  enabled           = true
-  starting_position = "TRIM_HORIZON"
+  source_arn = "${data.terraform_remote_state.api_gateway.outputs.execution_arn}/*/*/*"
 }

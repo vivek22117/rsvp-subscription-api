@@ -24,7 +24,7 @@ terraform {
     profile = "admin"
     bucket = "doubledigit-tfstate-qa-us-east-1"
     dynamodb_table = "doubledigit-tfstate-qa-us-east-1"
-    key = "state/qa/api-gateway/kinesis-publisher/terraform.tfstate"
+    key = "state/qa/api-gateway/subscriber-api/terraform.tfstate"
     region = "us-east-1"
     encrypt = true
   }

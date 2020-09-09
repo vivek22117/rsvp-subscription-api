@@ -16,6 +16,15 @@ variable "environment" {
   description = "Environment to deploy, Valid values 'qa', 'dev', 'prod'"
 }
 
+variable "subscriber_api_lambda_handler" {
+  type = string
+  description = "AWS Lambda handler method name"
+}
+
+variable "subscriber_api_lambda" {
+  type = string
+  description = "AWS Lambda function name"
+}
 
 #################################
 #  Default Variables            #
@@ -30,7 +39,55 @@ variable "s3_bucket_prefix" {
 #################################
 # Application Variables         #
 #################################
+variable "db_table_name" {
+  type = string
+  description = "Name of the table for subscribers"
+}
 
+variable "hash_key" {
+  type = string
+  description = "DynmoDB table hash key"
+}
+
+variable "billing_mode" {
+  type = string
+  description = "DynamoDB Billing mode. Can be PROVISIONED or PAY_PER_REQUEST"
+}
+
+variable "db_read_capacity" {
+  type = number
+  description = "DynamoDB read capacity"
+}
+
+variable "db_write_capacity" {
+  type = number
+  description = "DynamoDB write capacity"
+}
+
+variable "enable_encryption" {
+  type = bool
+  description = "Enable DynamoDB server-side encryption"
+}
+
+variable "enable_point_in_time_recovery" {
+  type = bool
+  description = "Enable DynamoDB point in time recovery"
+}
+
+variable "lambda_memory" {
+  type = number
+  description = "AWS Lambda function memory limit"
+}
+
+variable "lambda_timeout" {
+  type = number
+  description = "AWS Lambda function timeout"
+}
+
+variable "subscriber_api_lambda_bucket_key" {
+  type = string
+  description = "S3 key to upload deployable zip file"
+}
 ####################################
 # Local variables                  #
 ####################################
