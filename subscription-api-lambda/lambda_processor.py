@@ -16,48 +16,28 @@ def lambda_handler(event, context):
 
     subscribersTalble = dynamodb.Table('subscripbers-table')
 
-    response = {
-        "body": json.dumps({"message": ""}),
-        "headers": {
-            "content-type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-        },
-        "statusCode": 405,
-        "isBase64Encoded": False,
-    }
+    resource_arn = event['resourceARN']
+    resource_type = event['resourceType']
 
-    path, method = event.get('path'), event.get('httpMethod')
-    data = event['body']
-
-    LOG.info('Received HTTP %s request for path %s' % (method, path))
-
-    if path == '/messages' and method == 'POST':
-        response["body"], response["statusCode"] = perform_operation(data)
-
-    else:
-        msg = '%s %s not allowed' % (method, path)
-        response["statusCode"] = 405
-        response["body"] = json.dumps({"error": msg})
-        LOG.error(msg)
-
-    return response
-
-
-def perform_operation(data):
-    LOG.info("Processing payload %s" % data)
-
+    # Putting a try/catch to log to user when some error occurs
     try:
-        ses.send_email(
-            Source=VERIFIED_EMAIL,
-            Destination={
-                'ToAddresses': [VERIFIED_EMAIL]  # Also a verified email
-            },
-            Message={
-                'Subject': {'Data': 'A message from professional website!!'},
-                'Body': {'Text': {'Data': data}}
+
+        subscribersTalble.put_item(
+            Item={
+                'eventDateTime': eventDateTime,
+                'deviceId': deviceId,
+                'temperature': int(temperature)
             }
         )
-        return json.dumps({"message": "Successfully delivered!"}), 200
-    except Exception as error:
-        LOG.error("Something went wrong: %s" % error)
-        return json.dumps({"message": str(error)}), 500
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Successfully inserted Subscriber!')
+        }
+    except Exception as ex:
+        print('Closing lambda function')
+        return {
+            'statusCode': 400,
+            'body': json.dumps('Error saving the Subscriber')
+        }
+
