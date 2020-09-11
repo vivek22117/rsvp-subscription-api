@@ -123,4 +123,11 @@ resource "aws_api_gateway_deployment" "rsvp_api_deployment" {
 
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   stage_name = var.environment
+
+  # Redeploy when there are new updates
+  triggers = {
+    redeployment = sha1(join(",", list(
+    jsonencode(aws_api_gateway_integration.rsvp_api_integration),
+    )))
+  }
 }
