@@ -1,13 +1,13 @@
-####################################################
-#adding the lambda archive to the defined bucket   #
-####################################################
+############################################################
+#        Adding the lambda archive to the defined bucket   #
+############################################################
 resource "aws_s3_bucket_object" "subscriber_api_package" {
-  depends_on = ["data.archive_file.kinesis_rsvp_publisher_lambda_jar"]
+  depends_on = [data.archive_file.kinesis_rsvp_publisher_lambda_jar]
 
-  bucket = data.terraform_remote_state.backend.outputs.deploy_bucket_name
+  bucket = data.terraform_remote_state.backend.outputs.artifactory_bucket_name
   key    = var.subscriber_api_lambda_bucket_key
   source = "${path.module}/lambda-package/lambda_processor.zip"
-  etag   = filemd5("${path.module}/../../KinesisPublisher/target/kinesis-rsvp-publisher-1.0.0-lambda.zip")
+  etag   = filemd5("${path.module}/lambda-package/lambda_processor.zip")
 }
 
 data "archive_file" "kinesis_rsvp_publisher_lambda_jar" {
@@ -18,9 +18,9 @@ data "archive_file" "kinesis_rsvp_publisher_lambda_jar" {
 
 
 resource "aws_lambda_function" "subscriber_api_lambda" {
-  depends_on = ["aws_iam_role.k_lambda_k_role", "aws_iam_policy.kinesis_lambda_policy"]
+  depends_on = [aws_iam_role.k_lambda_k_role, aws_iam_policy.kinesis_lambda_policy]
 
-  description = "Lambda function to publish RSVP records!"
+  description = "Lambda function to save subscribers!"
 
   function_name = var.subscriber_api_lambda
   handler       = var.subscriber_api_lambda_handler
@@ -42,7 +42,7 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
     }
   }
 
-  tags = merge(local.common_tags, map("Name", "${var.environment}-rsvp-subscriber-api"))
+  tags = merge(local.common_tags, map("Name", "${var.environment}-rsvp-subscribers-processor"))
 }
 
 resource "aws_lambda_permission" "allow_api_gateway" {
