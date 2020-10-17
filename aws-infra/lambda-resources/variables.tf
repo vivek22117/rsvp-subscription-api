@@ -16,16 +16,6 @@ variable "environment" {
   description = "Environment to deploy, Valid values 'qa', 'dev', 'prod'"
 }
 
-variable "subscriber_api_lambda_handler" {
-  type = string
-  description = "AWS Lambda handler method name"
-}
-
-variable "subscriber_api_lambda" {
-  type = string
-  description = "AWS Lambda function name"
-}
-
 #################################
 #  Default Variables            #
 #################################
@@ -39,6 +29,16 @@ variable "s3_bucket_prefix" {
 #################################
 # Application Variables         #
 #################################
+variable "subscriber_api_lambda_handler" {
+  type = string
+  description = "AWS Lambda handler method name"
+}
+
+variable "subscriber_api_lambda" {
+  type = string
+  description = "AWS Lambda function name"
+}
+
 variable "db_table_name" {
   type = string
   description = "Name of the table for subscribers"
@@ -46,7 +46,7 @@ variable "db_table_name" {
 
 variable "hash_key" {
   type = string
-  description = "DynmoDB table hash key"
+  description = "DynamoDB table hash key"
 }
 
 variable "billing_mode" {
@@ -87,6 +87,11 @@ variable "lambda_timeout" {
 variable "subscriber_api_lambda_bucket_key" {
   type = string
   description = "S3 key to upload deployable zip file"
+}
+
+variable "add_subscription_path" {
+  type        = string
+  description = "URL path to add new subscription!"
 }
 ####################################
 # Local variables                  #
