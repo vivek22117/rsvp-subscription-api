@@ -38,7 +38,7 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
   environment {
     variables = {
       environment = var.environment
-      subscribers-table = data.terraform_remote_state.publisher_lambda.outputs.dynamo_db_name
+      subscribers-table = aws_dynamodb_table.subscriber_table.name
     }
   }
 

@@ -1,7 +1,7 @@
 resource "aws_iam_role" "k_lambda_k_role" {
   depends_on = ["aws_iam_policy.kinesis_lambda_policy"]
 
-  name ="KinesisLambdaPublisherRole"
+  name ="RSVPSubscriberAPIRole"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -20,7 +20,7 @@ EOF
 
 
 resource "aws_iam_policy" "kinesis_lambda_policy" {
-  name = "KinesisLambdaPublisherPolicy"
+  name = "RSVPSubscriberAPIPolicy"
   description = "Policy to access DynamoDB and Kinesis"
   path = "/"
   policy = <<EOF
@@ -46,33 +46,6 @@ resource "aws_iam_policy" "kinesis_lambda_policy" {
         "dynamodb:GetItem"
       ],
       "Resource": "${aws_dynamodb_table.subscriber_table.arn}"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-                "kinesis:DescribeStream",
-                "kinesis:DescribeStreamSummary",
-                "kinesis:GetRecords",
-                "kinesis:GetShardIterator",
-                "kinesis:ListShards",
-                "kinesis:ListStreams",
-                "kinesis:SubscribeToShard"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Action": [
-        "sns:*"
-      ],
-      "Resource": "*",
-      "Effect": "Allow"
-    },
-    {
-      "Action": [
-        "sqs:*"
-      ],
-      "Resource": "*",
-      "Effect": "Allow"
     }
   ]
 }
