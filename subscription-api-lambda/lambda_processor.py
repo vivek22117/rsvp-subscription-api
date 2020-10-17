@@ -7,37 +7,63 @@ from datetime import datetime
 LOG = logging.getLogger()
 LOG.setLevel('DEBUG')
 
+DYNAMO_DB = os.environ['subscribers-table']
+
+dynamodb_client = boto3.resource('dynamodb')
+
 
 def lambda_handler(event, context):
     LOG.info("event received.... ", event)
 
-    dynamodb = boto3.resource('dynamodb')
-    client = boto3.client('dynamodb')
+    response = {
+        "body": json.dumps({"message": ""}),
+        "headers": {
+            "content-type": "application/json"
+        },
+        "statusCode": 405,
+        "isBase64Encoded": False,
+    }
 
-    subscribersTalble = dynamodb.Table('subscripbers-table')
+    path, method = event.get('path'), event.get('httpMethod')
+    data = event['body']
 
-    resource_arn = event['resourceARN']
-    resource_type = event['resourceType']
+    LOG.info('Received HTTP %s request for path %s' % (method, path))
 
-    # Putting a try/catch to log to user when some error occurs
+    subscribers_Table = dynamodb_client.Table(DYNAMO_DB)
+
+    if path == '/add-subscription' and method == 'POST':
+        response["body"], response["statusCode"] = perform_operation(data, subscribers_Table)
+
+    else:
+        msg = '%s %s not allowed' % (method, path)
+        response["statusCode"] = 405
+        response["body"] = json.dumps({"error": msg})
+        LOG.error(msg)
+
+    return response
+
+
+def perform_operation(data, subscribers_Table):
+    LOG.info("Processing payload %s" % data)
+    LOG.info(type(data))
+    payload = json.loads(data)
+
     try:
+        subscriber_arn = payload['SubscriberARN']
+        resource_type = payload['ResourceType']
+        resource_arn = payload['ResourceARN']
+        subscriber_dataType = payload['DataType']
 
-        subscribersTalble.put_item(
+        subscribers_Table.put_item(
             Item={
-                'eventDateTime': eventDateTime,
-                'deviceId': deviceId,
-                'temperature': int(temperature)
+                'SubscriberARN': subscriber_arn,
+                'ResourceType': resource_type,
+                'ResourceARN': resource_arn,
+                'DataType': subscriber_dataType
             }
         )
 
-        return {
-            'statusCode': 200,
-            'body': json.dumps('Successfully inserted Subscriber!')
-        }
-    except Exception as ex:
-        print('Closing lambda function')
-        return {
-            'statusCode': 400,
-            'body': json.dumps('Error saving the Subscriber')
-        }
-
+        return json.dumps({"message": "Successfully delivered!"}), 200
+    except Exception as error:
+        LOG.error("Something went wrong: %s" % error)
+        return json.dumps({"message": str(error)}), 500
