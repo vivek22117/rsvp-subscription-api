@@ -183,7 +183,7 @@ resource "aws_api_gateway_integration" "rsvp_api_integration" {
 }
 
 ####################################
-# API Gateway deployment           #
+#     API Gateway deployment       #
 ####################################
 resource "aws_api_gateway_deployment" "rsvp_api_deployment" {
   depends_on = [aws_api_gateway_integration.rsvp_api_integration]

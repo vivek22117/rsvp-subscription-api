@@ -6,14 +6,14 @@ resource "aws_s3_bucket_object" "subscriber_api_package" {
 
   bucket = data.terraform_remote_state.backend.outputs.deploy_bucket_name
   key    = var.subscriber_api_lambda_bucket_key
-  source = "${path.module}/../../KinesisPublisher/target/kinesis-rsvp-publisher-1.0.0-lambda.zip"
+  source = "${path.module}/lambda-package/lambda_processor.zip"
   etag   = filemd5("${path.module}/../../KinesisPublisher/target/kinesis-rsvp-publisher-1.0.0-lambda.zip")
 }
 
 data "archive_file" "kinesis_rsvp_publisher_lambda_jar" {
   type        = "zip"
-  source_file = "${path.module}/../../KinesisPublisher/target/kinesis-rsvp-publisher-1.0.0.jar"
-  output_path = "kinesis-rsvp-publisher-lambda-jar/rsvp_lambda_publisher.zip"
+  source_file = "../subscription-api-lambda/lambda_processor.py"
+  output_path = "${path.module}/lambda-package/lambda_processor.zip"
 }
 
 
@@ -33,12 +33,12 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
 
   memory_size = var.lambda_memory
   timeout     = var.lambda_timeout
-  runtime     = "java8"
+  runtime     = "python3.8"
 
   environment {
     variables = {
-      isRunningInLambda = "true",
       environment = var.environment
+      subscribers-table = data.terraform_remote_state.publisher_lambda.outputs.dynamo_db_name
     }
   }
 

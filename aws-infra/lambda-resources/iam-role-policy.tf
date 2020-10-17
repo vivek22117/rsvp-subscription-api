@@ -59,6 +59,20 @@ resource "aws_iam_policy" "kinesis_lambda_policy" {
                 "kinesis:SubscribeToShard"
       ],
       "Resource": "*"
+    },
+    {
+      "Action": [
+        "sns:*"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": [
+        "sqs:*"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
     }
   ]
 }
