@@ -1,7 +1,8 @@
 resource "aws_iam_role" "k_lambda_k_role" {
-  depends_on = ["aws_iam_policy.kinesis_lambda_policy"]
+  depends_on = [aws_iam_policy.kinesis_lambda_policy]
 
-  name ="RSVPSubscriberAPIRole"
+  name ="RSVPSubscriberAPILambdaRole"
+  path = "/"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -20,13 +21,25 @@ EOF
 
 
 resource "aws_iam_policy" "kinesis_lambda_policy" {
-  name = "RSVPSubscriberAPIPolicy"
+  name = "RSVPSubscriberAPILambdaPolicy"
   description = "Policy to access DynamoDB and Kinesis"
   path = "/"
   policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+          "s3:Get*",
+          "s3:Put*",
+          "s3:List*"
+      ],
+      "Resource": [
+          "${data.terraform_remote_state.backend.outputs.artifactory_bucket_arn}",
+          "${data.terraform_remote_state.backend.outputs.artifactory_bucket_arn}/*"
+        ]
+    },
     {
       "Effect": "Allow",
       "Action": [

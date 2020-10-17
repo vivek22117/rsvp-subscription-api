@@ -7,7 +7,7 @@ from datetime import datetime
 LOG = logging.getLogger()
 LOG.setLevel('DEBUG')
 
-DYNAMO_DB = os.environ['subscribers-table']
+DYNAMO_DB = os.environ['subscriberTable']
 
 dynamodb_client = boto3.resource('dynamodb')
 
@@ -51,14 +51,14 @@ def perform_operation(data, subscribers_Table):
     try:
         subscriber_arn = payload['SubscriberARN']
         resource_type = payload['ResourceType']
-        resource_arn = payload['ResourceARN']
+        resource_name = payload['ResourceName']
         subscriber_dataType = payload['DataType']
 
         subscribers_Table.put_item(
             Item={
                 'SubscriberARN': subscriber_arn,
                 'ResourceType': resource_type,
-                'ResourceARN': resource_arn,
+                'ResourceName': resource_name,
                 'DataType': subscriber_dataType
             }
         )

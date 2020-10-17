@@ -179,7 +179,7 @@ resource "aws_api_gateway_integration" "rsvp_api_integration" {
   http_method = aws_api_gateway_method.rsvp_api_method_POST.http_method
   type = "AWS_PROXY"
   integration_http_method = "POST"
-  uri = aws_lambda_function.subscriber_api_lambda.arn
+  uri = aws_lambda_function.subscriber_api_lambda.invoke_arn
 }
 
 ####################################

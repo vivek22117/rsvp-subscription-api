@@ -75,12 +75,12 @@ variable "enable_point_in_time_recovery" {
 }
 
 variable "lambda_memory" {
-  type = number
+  type = string
   description = "AWS Lambda function memory limit"
 }
 
 variable "lambda_timeout" {
-  type = number
+  type = string
   description = "AWS Lambda function timeout"
 }
 

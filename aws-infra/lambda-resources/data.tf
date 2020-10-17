@@ -7,7 +7,7 @@ data "terraform_remote_state" "backend" {
   config = {
     profile = var.profile
     bucket ="${var.s3_bucket_prefix}-${var.environment}-${var.default_region}"
-    key = "state/${var.environment}/aws/terraform.tfstate"
+    key = "state/${var.environment}/backend/terraform.tfstate"
     region = var.default_region
   }
 }
