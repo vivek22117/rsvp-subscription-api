@@ -33,6 +33,8 @@ def lambda_handler(event, context):
 
     if path == '/add-subscription' and method == 'POST':
         response["body"], response["statusCode"] = perform_operation(data, subscribers_Table)
+    if path == '/get-subscription' and method == 'GET':
+        response["body"], response["statusCode"] = perform__get_subscription(data, subscribers_Table)
 
     else:
         msg = '%s %s not allowed' % (method, path)
@@ -67,3 +69,7 @@ def perform_operation(data, subscribers_Table):
     except Exception as error:
         LOG.error("Something went wrong: %s" % error)
         return json.dumps({"message": str(error)}), 500
+
+
+def perform__get_subscription(data, subscribers_Table):
+    return json.dumps({"message": "Successfully delivered!"}), 200

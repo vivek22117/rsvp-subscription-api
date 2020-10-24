@@ -2,7 +2,7 @@ output "lambda_arn" {
   value = aws_lambda_function.subscriber_api_lambda.arn
 }
 
-output "url" {
+output "api_url" {
   value = aws_api_gateway_deployment.rsvp_api_deployment.invoke_url
 }
 
