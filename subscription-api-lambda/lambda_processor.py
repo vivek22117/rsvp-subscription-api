@@ -34,7 +34,7 @@ def lambda_handler(event, context):
     if path == '/add-subscription' and method == 'POST':
         response["body"], response["statusCode"] = perform_operation(data, subscribers_Table)
     if path == '/get-subscription' and method == 'GET':
-        response["body"], response["statusCode"] = perform__get_subscription(data, subscribers_Table)
+        response["body"], response["statusCode"] = perform_get_subscription(data, subscribers_Table)
     if path == '/delete-subscription' and method == 'DELETE':
         response["body"], response["statusCode"] = perform_delete_subscription(data, subscribers_Table)
 
@@ -48,7 +48,7 @@ def lambda_handler(event, context):
 
 
 def perform_operation(data, subscribers_Table):
-    LOG.info("Processing payload %s" % data)
+    LOG.info("Processing payload to add new subscriber %s" % data)
     LOG.info(type(data))
     payload = json.loads(data)
 
@@ -73,8 +73,31 @@ def perform_operation(data, subscribers_Table):
         return json.dumps({"message": str(error)}), 500
 
 
-def perform__get_subscription(data, subscribers_Table):
-    return json.dumps({"message": "Successfully delivered!"}), 200
+def perform_get_subscription(data, subscribers_Table):
+    LOG.info("Processing payload to get subscriber %s" % data)
+    LOG.info(type(data))
+    payload = json.loads(data)
+
+    try:
+        subscriber_arn = payload['SubscriberARN']
+        resource_type = payload['ResourceType']
+        resource_name = payload['ResourceName']
+        subscriber_dataType = payload['DataType']
+
+        subscribers_Table.put_item(
+            Item={
+                'SubscriberARN': subscriber_arn,
+                'ResourceType': resource_type,
+                'ResourceName': resource_name,
+                'DataType': subscriber_dataType
+            }
+        )
+
+        return json.dumps({"message": "Successfully delivered!"}), 200
+    except Exception as error:
+        LOG.error("Something went wrong: %s" % error)
+        return json.dumps({"message": str(error)}), 500
+
 
 def perform_delete_subscription(data, subscribers_Table):
     return json.dumps({"message": "Successfully delivered!"}), 200
