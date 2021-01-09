@@ -1,5 +1,5 @@
 ############################################
-#     Configure API Gateway Logging         #
+#     Configure API Gateway Logging        #
 ############################################
 resource "aws_api_gateway_account" "rsvp_subscriber_api_config" {
   cloudwatch_role_arn = aws_iam_role.rsvp_processor_api_role.arn
@@ -13,7 +13,6 @@ resource "aws_iam_role" "rsvp_processor_api_role" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "",
       "Effect": "Allow",
       "Principal": {
         "Service": "apigateway.amazonaws.com"
