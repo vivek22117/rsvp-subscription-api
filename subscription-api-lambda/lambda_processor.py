@@ -30,7 +30,7 @@ def lambda_handler(event, context):
     LOG.info('Received HTTP %s request for path %s' % (method, path))
 
     if path == '/add-subscription' and method == 'POST':
-        response["body"], response["statusCode"] = perform_operation(data, DYNAMO_DB)
+        response["body"], response["statusCode"] = perform_put_operation(data, DYNAMO_DB)
     if path == '/get-subscription' and method == 'GET':
         response["body"], response["statusCode"] = perform_get_subscription(data, DYNAMO_DB)
     if path == '/delete-subscription' and method == 'DELETE':
@@ -45,7 +45,7 @@ def lambda_handler(event, context):
     return response
 
 
-def perform_operation(data, subscribers_Table):
+def perform_put_operation(data, subscribers_Table):
     LOG.info("Processing payload to add new subscriber %s" % data)
     LOG.info(type(data))
     payload = json.loads(data)
@@ -90,11 +90,29 @@ def perform_get_subscription(data, subscribers_Table):
             }
         )
         LOG.info(response['Items'])
-        return json.dumps({"message": "Successfully delivered!"}), 200
+        return json.dumps({"message": "Successfully!"}), 200
     except Exception as error:
         LOG.error("Something went wrong: %s" % error)
         return json.dumps({"message": str(error)}), 500
 
 
 def perform_delete_subscription(data, subscribers_Table):
-    return json.dumps({"message": "Successfully delivered!"}), 200
+    LOG.info("Processing payload to delete subscriber %s" % data)
+    payload = json.loads(data)
+
+    try:
+        resource_name = payload['ResourceName']
+
+        response = dynamodb_client.delete_item(
+            Key= {
+                'ResourceName': {
+                    'S': resource_name,
+                }
+            },
+            TableName=DYNAMO_DB,
+        )
+        LOG.info(response['Items'])
+        return json.dumps({"message": "Successfully!"}), 200
+    except Exception as error:
+        LOG.error("Something went wrong: %s" % error)
+        return json.dumps({"message": str(error)}), 500

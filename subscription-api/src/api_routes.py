@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 
 @app.route('/api/<string:version>/health', methods=['GET'])
-@by_path_counter
 def health(version):
     if version == CURRENT_VERSION:
         status = 200
