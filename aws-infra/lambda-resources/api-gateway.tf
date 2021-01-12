@@ -76,6 +76,14 @@ resource "aws_api_gateway_resource" "rsvp_subscriber_api_resource" {
   path_part = var.add_subscription_path
 }
 
+
+resource "aws_api_gateway_resource" "get_api_resource" {
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  parent_id   = aws_api_gateway_rest_api.rsvp_subscriber_api.root_resource_id
+
+  path_part = var.get_subscription_path
+}
+
 ######################################################
 #               Enable CORS                          #
 ######################################################
@@ -135,7 +143,55 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
 }
 
 #################################################################
-# HTTP method to a API Gateway resource (REST endpoint)         #
+# HTTP GET method to a API Gateway resource (REST endpoint)    #
+#################################################################
+resource "aws_api_gateway_method" "rsvp_api_method_GET" {
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id = aws_api_gateway_resource.get_api_resource.id
+
+  http_method = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method_settings" "get_enable_logging" {
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  stage_name  = aws_api_gateway_deployment.rsvp_api_deployment.stage_name
+  method_path = "${aws_api_gateway_resource.rsvp_subscriber_api_resource.path_part}/${aws_api_gateway_method.rsvp_api_method_GET.http_method}"
+
+  settings {
+    metrics_enabled    = true
+    data_trace_enabled = true
+    logging_level      = "INFO"
+  }
+}
+
+
+resource "aws_api_gateway_method_response" "get_api_method_response_200" {
+  depends_on = [aws_api_gateway_method.rsvp_api_method_GET]
+
+  rest_api_id   = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id   = aws_api_gateway_resource.get_api_resource.id
+  http_method   = aws_api_gateway_method.rsvp_api_method_GET.http_method
+  status_code   = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+resource "aws_api_gateway_integration" "get_rsvp_api_integration" {
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id = aws_api_gateway_resource.get_api_resource.id
+
+  http_method = aws_api_gateway_method.rsvp_api_method_GET.http_method
+  type = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri = aws_lambda_function.subscriber_api_lambda.invoke_arn
+}
+
+
+#################################################################
+# HTTP POST method to a API Gateway resource (REST endpoint)    #
 #################################################################
 resource "aws_api_gateway_method" "rsvp_api_method_POST" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
