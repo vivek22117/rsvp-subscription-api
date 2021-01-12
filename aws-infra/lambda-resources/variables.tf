@@ -93,6 +93,11 @@ variable "add_subscription_path" {
   type        = string
   description = "URL path to add new subscription!"
 }
+
+variable "get_subscription_path" {
+  type        = string
+  description = "URL path to get all subscription!"
+}
 ####################################
 # Local variables                  #
 ####################################
