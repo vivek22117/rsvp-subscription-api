@@ -19,20 +19,6 @@ pipeline {
     }
 
     stages {
-        stage('build') {
-            when {
-                expression {
-                    "${params.AWS_INFRA_ACTION}" == "create"
-                }
-            }
-            steps {
-                dir('subscription-api-lambda/') {
-                    script {
-                        sh "aws s3 cp . "
-                    }
-                }
-            }
-        }
         stage('tf-init') {
             steps {
                 dir('aws-infra/lambda-resources/') {
