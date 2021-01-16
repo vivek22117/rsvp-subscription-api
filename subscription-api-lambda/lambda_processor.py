@@ -63,11 +63,11 @@ def perform_put_operation(data, subscribers_Table):
             'DataType': {'S': subscriber_dataType}
         }
 
-        dynamodb_client.put_item(
+        response = dynamodb_client.put_item(
             TableName=subscribers_Table,
             Item=item
         )
-
+        LOG.debug(response)
         return json.dumps({"message": "Successfully delivered!"}), 200
     except Exception as error:
         LOG.error("Something went wrong: %s" % error)
