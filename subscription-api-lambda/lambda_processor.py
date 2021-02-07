@@ -24,28 +24,31 @@ def lambda_handler(event, context):
         "isBase64Encoded": False,
     }
 
-    path, method = event.get('path'), event.get('httpMethod')
-    data = event['body']
+    try:
+        path, method = event.get('path'), event.get('httpMethod')
+        data = event['body']
 
-    LOG.info('Received HTTP %s request for path %s' % (method, path))
+        LOG.info('Received HTTP %s request for path %s' % (method, path))
 
-    if path == '/add-subscription' and method == 'POST':
-        response["body"], response["statusCode"] = perform_put_operation(data, DYNAMO_DB)
-    if path == '/get-subscription' and method == 'GET':
-        response["body"], response["statusCode"] = perform_get_subscription(data, DYNAMO_DB)
-    if path == '/delete-subscription' and method == 'DELETE':
-        response["body"], response["statusCode"] = perform_delete_subscription(data, DYNAMO_DB)
+        if path == '/add-subscription' and method == 'POST':
+            response["body"], response["statusCode"] = perform_put_operation(data, DYNAMO_DB)
+        if path == '/get-subscription' and method == 'GET':
+            response["body"], response["statusCode"] = perform_get_subscription(data, DYNAMO_DB)
+        if path == '/delete-subscription' and method == 'DELETE':
+            response["body"], response["statusCode"] = perform_delete_subscription(data, DYNAMO_DB)
 
-    else:
-        msg = '%s %s not allowed' % (method, path)
-        response["statusCode"] = 405
-        response["body"] = json.dumps({"error": msg})
-        LOG.error(msg)
+        else:
+            msg = '%s %s not allowed' % (method, path)
+            response["statusCode"] = 405
+            response["body"] = json.dumps({"error": msg})
+            LOG.info(msg)
+    except Exception as ex:
+        LOG.error(str(ex))
 
     return response
 
 
-def perform_put_operation(data, subscribers_Table):
+def perform_put_operation(data, subscribers_table):
     LOG.info("Processing payload to add new subscriber %s" % data)
     LOG.info(type(data))
     payload = json.loads(data)
@@ -64,7 +67,7 @@ def perform_put_operation(data, subscribers_Table):
         }
 
         response = dynamodb_client.put_item(
-            TableName=subscribers_Table,
+            TableName=subscribers_table,
             Item=item
         )
         LOG.debug(response)
