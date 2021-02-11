@@ -189,8 +189,8 @@ resource "aws_api_gateway_method_response" "get_api_method_response_200" {
 resource "aws_api_gateway_integration" "get_rsvp_api_integration" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   resource_id = aws_api_gateway_resource.get_api_resource.id
-
   http_method = aws_api_gateway_method.rsvp_api_method_GET.http_method
+
   type = "AWS_PROXY"
   integration_http_method = "POST"
   uri = aws_lambda_function.subscriber_api_lambda.invoke_arn
@@ -208,7 +208,7 @@ resource "aws_api_gateway_method" "rsvp_api_method_POST" {
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_method_settings" "enable_logging" {
+resource "aws_api_gateway_method_settings" "post_enable_logging" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   stage_name  = aws_api_gateway_deployment.rsvp_api_deployment.stage_name
   method_path = "${aws_api_gateway_resource.rsvp_subscriber_api_resource.path_part}/${aws_api_gateway_method.rsvp_api_method_POST.http_method}"
@@ -221,7 +221,54 @@ resource "aws_api_gateway_method_settings" "enable_logging" {
 }
 
 
-resource "aws_api_gateway_method_response" "api_method_response_200" {
+resource "aws_api_gateway_method_response" "post_api_method_response_200" {
+  depends_on = [aws_api_gateway_method.rsvp_api_method_POST]
+
+  rest_api_id   = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id   = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
+  http_method   = aws_api_gateway_method.rsvp_api_method_POST.http_method
+  status_code   = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+resource "aws_api_gateway_integration" "rsvp_api_integration" {
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
+
+  http_method = aws_api_gateway_method.rsvp_api_method_POST.http_method
+  type = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri = aws_lambda_function.subscriber_api_lambda.invoke_arn
+}
+
+#################################################################
+# HTTP DELETE method to a API Gateway resource (REST endpoint)    #
+#################################################################
+resource "aws_api_gateway_method" "rsvp_api_method_DELETE" {
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
+
+  http_method = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method_settings" "delete_enable_logging" {
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  stage_name  = aws_api_gateway_deployment.rsvp_api_deployment.stage_name
+  method_path = "${aws_api_gateway_resource.rsvp_subscriber_api_resource.path_part}/${aws_api_gateway_method.rsvp_api_method_DELETE.http_method}"
+
+  settings {
+    metrics_enabled    = true
+    data_trace_enabled = true
+    logging_level      = "INFO"
+  }
+}
+
+
+resource "aws_api_gateway_method_response" "delete_api_method_response_200" {
   depends_on = [aws_api_gateway_method.rsvp_api_method_POST]
 
   rest_api_id   = aws_api_gateway_rest_api.rsvp_subscriber_api.id
