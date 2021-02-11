@@ -98,6 +98,11 @@ variable "get_subscription_path" {
   type        = string
   description = "URL path to get all subscription!"
 }
+
+variable "delete_subscription_path" {
+  type        = string
+  description = "URL path to delete all subscription!"
+}
 ####################################
 # Local variables                  #
 ####################################
