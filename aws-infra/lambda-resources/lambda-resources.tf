@@ -7,7 +7,7 @@ resource "aws_s3_bucket_object" "subscriber_api_package" {
   bucket = data.terraform_remote_state.backend.outputs.artifactory_bucket_name
   key    = var.subscriber_api_lambda_bucket_key
   source = "${path.module}/lambda-package/lambda_processor.zip"
-//  etag   = filemd5("${path.module}/lambda-package/lambda_processor.zip")
+  etag   = filemd5("${path.module}/lambda-package/lambda_processor.zip")
 }
 
 data "archive_file" "kinesis_rsvp_publisher_lambda_jar" {
@@ -25,11 +25,11 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
   function_name = var.subscriber_api_lambda
   handler       = var.subscriber_api_lambda_handler
 
-//  s3_bucket = aws_s3_bucket_object.subscriber_api_package.bucket
-//  s3_key    = aws_s3_bucket_object.subscriber_api_package.key
+  s3_bucket = aws_s3_bucket_object.subscriber_api_package.bucket
+  s3_key    = aws_s3_bucket_object.subscriber_api_package.key
 
-  filename = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_path
-  source_code_hash = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_base64sha256
+//  filename = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_path
+//  source_code_hash = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_base64sha256
   role             = aws_iam_role.k_lambda_k_role.arn
 
   memory_size = var.lambda_memory
