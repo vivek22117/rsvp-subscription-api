@@ -24,7 +24,7 @@ pipeline {
                 dir('aws-infra/lambda-resources/') {
                     script {
                         sh "terraform --version"
-                        sh "terraform init"
+                        sh "terraform init -backend-config='backend-config-${ENVIRONMENT}.config'"
                         sh "whoami"
                     }
                 }
