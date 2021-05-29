@@ -156,7 +156,7 @@ resource "aws_api_gateway_method" "rsvp_api_method_GET" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   resource_id = aws_api_gateway_resource.get_api_resource.id
 
-  http_method = "POST"
+  http_method = "GET"
   authorization = "NONE"
 }
 
@@ -251,7 +251,7 @@ resource "aws_api_gateway_method" "rsvp_api_method_DELETE" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
 
-  http_method = "POST"
+  http_method = "DELETE"
   authorization = "NONE"
 }
 
@@ -310,4 +310,24 @@ resource "aws_api_gateway_deployment" "rsvp_api_deployment" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+
+#####################
+# SSL custom domain #
+#####################
+
+data "aws_acm_certificate" "api" {
+  domain = var.domain_name
+}
+
+resource "aws_api_gateway_domain_name" "api" {
+  domain_name = var.domain_name
+  certificate_arn = data.aws_acm_certificate.api.arn
+}
+
+resource "aws_api_gateway_base_path_mapping" "api" {
+  api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  stage_name = aws_api_gateway_deployment.rsvp_api_deployment.stage_name
+  domain_name = aws_api_gateway_domain_name.api.domain_name
 }
