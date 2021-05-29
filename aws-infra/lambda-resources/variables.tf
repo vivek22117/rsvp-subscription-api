@@ -103,6 +103,11 @@ variable "delete_subscription_path" {
   type        = string
   description = "URL path to delete all subscription!"
 }
+
+variable "domain_name" {
+  type = string
+  description = "domain name for API Gateway"
+}
 ####################################
 # Local variables                  #
 ####################################
