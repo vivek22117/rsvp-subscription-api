@@ -1,8 +1,8 @@
 resource "aws_iam_role" "k_lambda_k_role" {
   depends_on = [aws_iam_policy.kinesis_lambda_policy]
 
-  name ="RSVPSubscriberAPILambdaRole"
-  path = "/"
+  name               = "RSVPSubscriberAPILambdaRole"
+  path               = "/"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -21,10 +21,10 @@ EOF
 
 
 resource "aws_iam_policy" "kinesis_lambda_policy" {
-  name = "RSVPSubscriberAPILambdaPolicy"
+  name        = "RSVPSubscriberAPILambdaPolicy"
   description = "Policy to access DynamoDB and Kinesis"
-  path = "/"
-  policy = <<EOF
+  path        = "/"
+  policy      = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
