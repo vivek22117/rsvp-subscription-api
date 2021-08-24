@@ -2,8 +2,7 @@
 # AWS provider configuration                       #
 ####################################################
 provider "aws" {
-  region  = var.default_region
-  profile = var.profile
+  region = var.default_region
 }
 
 
@@ -27,7 +26,7 @@ terraform {
     }
     template = {
       source  = "hashicorp/template"
-      version = "~> 2.1"
+      version = "~> 2.0"
     }
     archive = {
       source  = "hashicorp/archive"
@@ -42,7 +41,6 @@ terraform {
 
 
   backend "s3" {
-    profile = "qa-admin"
     region  = "us-east-1"
     encrypt = "true"
   }
