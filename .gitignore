@@ -160,7 +160,7 @@ target/
 *.tfstate.*
 
 # .tfvars files
-*.tfvars
+terraform.tfvars
 
 # Compiled class file
 *.class
