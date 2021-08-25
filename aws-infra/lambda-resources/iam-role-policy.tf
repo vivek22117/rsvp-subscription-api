@@ -36,8 +36,8 @@ resource "aws_iam_policy" "kinesis_lambda_policy" {
           "s3:List*"
       ],
       "Resource": [
-          "${data.terraform_remote_state.backend.outputs.artifactory_bucket_arn}",
-          "${data.terraform_remote_state.backend.outputs.artifactory_bucket_arn}/*"
+          "${data.terraform_remote_state.s3_buckets.outputs.artifactory_s3_arn}",
+          "${data.terraform_remote_state.s3_buckets.outputs.artifactory_s3_arn}/*"
         ]
     },
     {
