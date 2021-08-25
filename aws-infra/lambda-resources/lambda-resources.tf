@@ -4,7 +4,7 @@
 resource "aws_s3_bucket_object" "subscriber_api_package" {
   depends_on = [data.archive_file.kinesis_rsvp_publisher_lambda_jar]
 
-  bucket = data.terraform_remote_state.backend.outputs.artifactory_bucket_name
+  bucket = data.terraform_remote_state.s3_buckets.outputs.artifactory_s3_name
   key    = var.subscriber_api_lambda_bucket_key
   source = "${path.module}/lambda-package/lambda_processor.zip"
   etag   = filemd5("${path.module}/lambda-package/lambda_processor.zip")
@@ -28,9 +28,9 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
   s3_bucket = aws_s3_bucket_object.subscriber_api_package.bucket
   s3_key    = aws_s3_bucket_object.subscriber_api_package.key
 
-//  filename = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_path
-//  source_code_hash = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_base64sha256
-  role             = aws_iam_role.k_lambda_k_role.arn
+  //  filename = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_path
+  //  source_code_hash = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_base64sha256
+  role = aws_iam_role.k_lambda_k_role.arn
 
   memory_size = var.lambda_memory
   timeout     = var.lambda_timeout
@@ -38,7 +38,7 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
 
   environment {
     variables = {
-      environment = var.environment
+      environment     = var.environment
       subscriberTable = aws_dynamodb_table.subscriber_table.name
     }
   }
@@ -47,10 +47,10 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
 }
 
 resource "aws_lambda_permission" "allow_api_gateway" {
-  statement_id = "AllowExecutionFromApiGateway"
+  statement_id  = "AllowExecutionFromApiGateway"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.subscriber_api_lambda.arn
-  principal = "apigateway.amazonaws.com"
+  principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_api_gateway_rest_api.rsvp_subscriber_api.execution_arn}/*/*/*"
 }
