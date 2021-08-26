@@ -2,7 +2,7 @@
 #        Adding the lambda archive to the defined bucket   #
 ############################################################
 resource "aws_s3_bucket_object" "subscriber_api_package" {
-  depends_on = [data.archive_file.kinesis_rsvp_publisher_lambda_jar]
+  depends_on = [data.archive_file.subscriber_api_package_zip]
 
   bucket = data.terraform_remote_state.s3_buckets.outputs.artifactory_s3_name
   key    = var.subscriber_api_lambda_bucket_key
@@ -10,7 +10,7 @@ resource "aws_s3_bucket_object" "subscriber_api_package" {
   etag   = filemd5("${path.module}/lambda-package/lambda_processor.zip")
 }
 
-data "archive_file" "kinesis_rsvp_publisher_lambda_jar" {
+data "archive_file" "subscriber_api_package_zip" {
   type        = "zip"
   source_file = "../../subscription-api-lambda/lambda_processor.py"
   output_path = "${path.module}/lambda-package/lambda_processor.zip"
@@ -25,11 +25,10 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
   function_name = var.subscriber_api_lambda
   handler       = var.subscriber_api_lambda_handler
 
-  s3_bucket = aws_s3_bucket_object.subscriber_api_package.bucket
-  s3_key    = aws_s3_bucket_object.subscriber_api_package.key
+  s3_bucket        = aws_s3_bucket_object.subscriber_api_package.bucket
+  s3_key           = aws_s3_bucket_object.subscriber_api_package.key
+  source_code_hash = data.archive_file.subscriber_api_package_zip.output_base64sha256
 
-  //  filename = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_path
-  //  source_code_hash = data.archive_file.kinesis_rsvp_publisher_lambda_jar.output_base64sha256
   role = aws_iam_role.k_lambda_k_role.arn
 
   memory_size = var.lambda_memory
