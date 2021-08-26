@@ -20,7 +20,7 @@ data "archive_file" "kinesis_rsvp_publisher_lambda_jar" {
 resource "aws_lambda_function" "subscriber_api_lambda" {
   depends_on = [aws_iam_role.k_lambda_k_role, aws_iam_policy.kinesis_lambda_policy]
 
-  description = "Lambda function to save subscribers!"
+  description = "Lambda function to save kinesis subscribers!"
 
   function_name = var.subscriber_api_lambda
   handler       = var.subscriber_api_lambda_handler
