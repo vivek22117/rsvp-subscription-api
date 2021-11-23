@@ -107,7 +107,7 @@ def perform_delete_subscription(data, subscribers_Table):
         resource_name = payload['ResourceName']
 
         response = dynamodb_client.delete_item(
-            Key= {
+            Key={
                 'ResourceName': {
                     'S': resource_name,
                 }
