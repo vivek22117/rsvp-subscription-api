@@ -1,4 +1,4 @@
-name: 'Subscriber Lambda Infra Pipeline'
+name: 'RSVP Subscriber Lambda Infra Pipeline'
 
 on:
   workflow_dispatch:
@@ -18,13 +18,13 @@ on:
 
 env:
   tf_version: '0.13.5'
-  tf_working_dir_app: './aws-infra/lambda-resources/'
+  tf_working_dir_app: './deployment/subscription-lambda/'
   aws_region: 'us-east-1'
   environment: ${{ github.event.inputs.env }}
 
 jobs:
   terraform:
-    name: 'Subscriber-Lambda-Deployment-Pipeline-${{ github.event.inputs.action }}'
+    name: 'RSVP-Subscriber-API-Deployment-Pipeline-${{ github.event.inputs.action }}'
     runs-on: ubuntu-latest
 
     defaults:
