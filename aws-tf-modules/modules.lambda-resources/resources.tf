@@ -4,10 +4,10 @@
 resource "aws_dynamodb_table" "subscriber_table" {
   name = var.db_table_name
 
-  hash_key = var.hash_key
+  hash_key     = var.hash_key
   billing_mode = var.billing_mode
 
-  read_capacity = var.db_read_capacity
+  read_capacity  = var.db_read_capacity
   write_capacity = var.db_write_capacity
 
   server_side_encryption {

@@ -104,10 +104,10 @@ resource "aws_api_gateway_method" "options_method" {
 resource "aws_api_gateway_method_response" "options_200" {
   depends_on = [aws_api_gateway_method.options_method]
 
-  rest_api_id   = aws_api_gateway_rest_api.rsvp_subscriber_api.id
-  resource_id   = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
-  http_method   = aws_api_gateway_method.options_method.http_method
-  status_code   = "200"
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
+  http_method = aws_api_gateway_method.options_method.http_method
+  status_code = "200"
 
   response_models = {
     "application/json" = "Empty"
@@ -115,7 +115,7 @@ resource "aws_api_gateway_method_response" "options_200" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = true,
     "method.response.header.Access-Control-Allow-Methods" = true,
-    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
   }
 }
 
@@ -145,7 +145,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'"
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
 }
 
@@ -156,7 +156,7 @@ resource "aws_api_gateway_method" "rsvp_api_method_GET" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   resource_id = aws_api_gateway_resource.get_api_resource.id
 
-  http_method = "GET"
+  http_method   = "GET"
   authorization = "NONE"
 }
 
@@ -176,10 +176,10 @@ resource "aws_api_gateway_method_settings" "get_enable_logging" {
 resource "aws_api_gateway_method_response" "get_api_method_response_200" {
   depends_on = [aws_api_gateway_method.rsvp_api_method_GET]
 
-  rest_api_id   = aws_api_gateway_rest_api.rsvp_subscriber_api.id
-  resource_id   = aws_api_gateway_resource.get_api_resource.id
-  http_method   = aws_api_gateway_method.rsvp_api_method_GET.http_method
-  status_code   = "200"
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id = aws_api_gateway_resource.get_api_resource.id
+  http_method = aws_api_gateway_method.rsvp_api_method_GET.http_method
+  status_code = "200"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
@@ -191,9 +191,9 @@ resource "aws_api_gateway_integration" "get_rsvp_api_integration" {
   resource_id = aws_api_gateway_resource.get_api_resource.id
   http_method = aws_api_gateway_method.rsvp_api_method_GET.http_method
 
-  type = "AWS_PROXY"
+  type                    = "AWS_PROXY"
   integration_http_method = "POST"
-  uri = aws_lambda_function.subscriber_api_lambda.invoke_arn
+  uri                     = aws_lambda_function.subscriber_api_lambda.invoke_arn
 }
 
 
@@ -204,7 +204,7 @@ resource "aws_api_gateway_method" "rsvp_api_method_POST" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
 
-  http_method = "POST"
+  http_method   = "POST"
   authorization = "NONE"
 }
 
@@ -224,10 +224,10 @@ resource "aws_api_gateway_method_settings" "post_enable_logging" {
 resource "aws_api_gateway_method_response" "post_api_method_response_200" {
   depends_on = [aws_api_gateway_method.rsvp_api_method_POST]
 
-  rest_api_id   = aws_api_gateway_rest_api.rsvp_subscriber_api.id
-  resource_id   = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
-  http_method   = aws_api_gateway_method.rsvp_api_method_POST.http_method
-  status_code   = "200"
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
+  http_method = aws_api_gateway_method.rsvp_api_method_POST.http_method
+  status_code = "200"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
@@ -238,10 +238,10 @@ resource "aws_api_gateway_integration" "rsvp_api_integration" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
 
-  http_method = aws_api_gateway_method.rsvp_api_method_POST.http_method
-  type = "AWS_PROXY"
+  http_method             = aws_api_gateway_method.rsvp_api_method_POST.http_method
+  type                    = "AWS_PROXY"
   integration_http_method = "POST"
-  uri = aws_lambda_function.subscriber_api_lambda.invoke_arn
+  uri                     = aws_lambda_function.subscriber_api_lambda.invoke_arn
 }
 
 #################################################################
@@ -251,7 +251,7 @@ resource "aws_api_gateway_method" "rsvp_api_method_DELETE" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
 
-  http_method = "DELETE"
+  http_method   = "DELETE"
   authorization = "NONE"
 }
 
@@ -271,10 +271,10 @@ resource "aws_api_gateway_method_settings" "delete_enable_logging" {
 resource "aws_api_gateway_method_response" "delete_api_method_response_200" {
   depends_on = [aws_api_gateway_method.rsvp_api_method_DELETE]
 
-  rest_api_id   = aws_api_gateway_rest_api.rsvp_subscriber_api.id
-  resource_id   = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
-  http_method   = aws_api_gateway_method.rsvp_api_method_DELETE.http_method
-  status_code   = "200"
+  rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
+  http_method = aws_api_gateway_method.rsvp_api_method_DELETE.http_method
+  status_code = "200"
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
@@ -285,10 +285,10 @@ resource "aws_api_gateway_integration" "rsvp_delete_api_integration" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   resource_id = aws_api_gateway_resource.rsvp_subscriber_api_resource.id
 
-  http_method = aws_api_gateway_method.rsvp_api_method_DELETE.http_method
-  type = "AWS_PROXY"
+  http_method             = aws_api_gateway_method.rsvp_api_method_DELETE.http_method
+  type                    = "AWS_PROXY"
   integration_http_method = "POST"
-  uri = aws_lambda_function.subscriber_api_lambda.invoke_arn
+  uri                     = aws_lambda_function.subscriber_api_lambda.invoke_arn
 }
 
 ####################################
@@ -298,12 +298,12 @@ resource "aws_api_gateway_deployment" "rsvp_api_deployment" {
   depends_on = [aws_api_gateway_integration.rsvp_api_integration]
 
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
-  stage_name = var.environment
+  stage_name  = var.environment
 
   # Redeploy when there are new updates
   triggers = {
     redeployment = sha1(join(",", list(
-    jsonencode(aws_api_gateway_integration.rsvp_api_integration),
+      jsonencode(aws_api_gateway_integration.rsvp_api_integration),
     )))
   }
 
@@ -322,12 +322,12 @@ data "aws_acm_certificate" "api" {
 }
 
 resource "aws_api_gateway_domain_name" "api" {
-  domain_name = var.domain_name
+  domain_name     = var.domain_name
   certificate_arn = data.aws_acm_certificate.api.arn
 }
 
 resource "aws_api_gateway_base_path_mapping" "api" {
-  api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
-  stage_name = aws_api_gateway_deployment.rsvp_api_deployment.stage_name
+  api_id      = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+  stage_name  = aws_api_gateway_deployment.rsvp_api_deployment.stage_name
   domain_name = aws_api_gateway_domain_name.api.domain_name
 }
