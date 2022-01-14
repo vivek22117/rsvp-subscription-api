@@ -236,7 +236,7 @@ resource "aws_api_gateway_method_response" "post_api_method_response_200" {
   }
 }
 
-resource "aws_api_gateway_integration" "rsvp_api_integration" {
+resource "aws_api_gateway_integration" "post_rsvp_api_integration" {
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   resource_id = aws_api_gateway_resource.post_api_resource.id
 
@@ -414,7 +414,11 @@ resource "aws_api_gateway_integration_response" "delete_options_integration_resp
 #     API Gateway deployment       #
 ####################################
 resource "aws_api_gateway_deployment" "rsvp_api_deployment" {
-  depends_on = [aws_api_gateway_integration.rsvp_api_integration]
+  depends_on = [
+    aws_api_gateway_integration.post_rsvp_api_integration,
+    aws_api_gateway_integration.get_rsvp_api_integration,
+    aws_api_gateway_integration.rsvp_delete_api_integration
+  ]
 
   rest_api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
   stage_name  = var.environment
@@ -422,7 +426,9 @@ resource "aws_api_gateway_deployment" "rsvp_api_deployment" {
   # Redeploy when there are new updates
   triggers = {
     redeployment = sha1(join(",", list(
-      jsonencode(aws_api_gateway_integration.rsvp_api_integration),
+      jsonencode(aws_api_gateway_integration.post_rsvp_api_integration),
+      jsonencode(aws_api_gateway_integration.get_rsvp_api_integration),
+      jsonencode(aws_api_gateway_integration.rsvp_delete_api_integration)
     )))
   }
 
