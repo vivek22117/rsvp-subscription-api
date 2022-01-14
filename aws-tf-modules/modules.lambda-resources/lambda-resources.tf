@@ -49,9 +49,9 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
 
   environment {
     variables = {
-      environment        = var.environment
-      subscriberTable    = aws_dynamodb_table.subscriber_table.name
-      zip-package-s3-key = "${random_uuid.s3_path_uuid.result}/${var.subscriber_api_lambda_handler}"
+      environment     = var.environment
+      subscriberTable = aws_dynamodb_table.subscriber_table.name
+      S3KeyForPackage = "${random_uuid.s3_path_uuid.result}/${var.subscriber_api_lambda_handler}"
     }
   }
 
