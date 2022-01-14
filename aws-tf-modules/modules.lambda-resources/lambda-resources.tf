@@ -1,7 +1,18 @@
 ############################################################
 #        Adding the lambda archive to the defined bucket   #
 ############################################################
+resource "null_resource" "trigger_new_deployment" {
+  triggers = {
+    main = base64sha256(file("${path.module}/../../subscription-api-lambda/lambda_processor.py"))
+  }
+}
+
+resource "random_uuid" "s3_path_uuid" {}
+
+
 data "archive_file" "subscriber_api_package_zip" {
+  depends_on = [null_resource.trigger_new_deployment]
+
   type        = "zip"
   source_file = "${path.module}/../../subscription-api-lambda/lambda_processor.py"
   output_path = "${path.module}/lambda-package/lambda_processor.zip"
@@ -12,7 +23,7 @@ resource "aws_s3_bucket_object" "subscriber_api_package" {
   depends_on = [data.archive_file.subscriber_api_package_zip]
 
   bucket = data.terraform_remote_state.s3_buckets.outputs.artifactory_s3_name
-  key    = var.subscriber_api_lambda_bucket_key
+  key    = "${random_uuid.s3_path_uuid.result}/${var.subscriber_api_lambda_handler}"
   source = "${path.module}/lambda-package/lambda_processor.zip"
 }
 
@@ -38,8 +49,9 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
 
   environment {
     variables = {
-      environment     = var.environment
-      subscriberTable = aws_dynamodb_table.subscriber_table.name
+      environment        = var.environment
+      subscriberTable    = aws_dynamodb_table.subscriber_table.name
+      zip-package-s3-key = "${random_uuid.s3_path_uuid.result}/${var.subscriber_api_lambda_handler}"
     }
   }
 
