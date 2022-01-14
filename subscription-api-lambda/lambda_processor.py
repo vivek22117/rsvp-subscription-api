@@ -10,7 +10,6 @@ LOG.setLevel('DEBUG')
 DYNAMO_DB = os.environ['subscriberTable']
 
 dynamodb_client = boto3.client('dynamodb')
-table = dynamodb.Table(DYNAMO_DB)
 
 
 def lambda_handler(event, context):
@@ -66,7 +65,8 @@ def perform_put_operation(data, subscribers_table):
             'DataType': {'S': subscriber_dataType}
         }
 
-        response = table.put_item(
+        response = dynamodb_client.put_item(
+            TableName=subscribers_table,
             Item=item
         )
         LOG.debug(response)
