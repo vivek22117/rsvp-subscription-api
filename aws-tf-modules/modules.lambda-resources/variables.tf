@@ -1,12 +1,6 @@
 #############################
 # Global Variables          #
 #############################
-variable "profile" {
-  type        = string
-  description = "AWS profile name for credentials"
-  default     = "default"
-}
-
 variable "default_region" {
   type        = string
   description = "AWS region name to deploy resources"
