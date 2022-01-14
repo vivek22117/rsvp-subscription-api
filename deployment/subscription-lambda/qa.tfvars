@@ -5,7 +5,7 @@ subscriber_api_lambda_handler    = "lambda_processor.lambda_handler"
 subscriber_api_lambda            = "RSVPSubscriberAPIHandler"
 
 add_subscription_path    = "add-subscription"
-get_subscription_path    = "get-all"
+get_subscription_path    = "get-subscription"
 delete_subscription_path = "delete-subscription"
 
 db_table_name                 = "rsvp-subscribers-table"
