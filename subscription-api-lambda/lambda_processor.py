@@ -31,11 +31,17 @@ def lambda_handler(event, context):
         LOG.info('Received HTTP %s request for path %s' % (method, path))
 
         if path == '/add-subscription' and method == 'POST':
-            response["body"], response["statusCode"] = perform_put_operation(data, DYNAMO_DB)
+            status_message, status_code = perform_put_operation(data, DYNAMO_DB)
+            response["body"] = status_message
+            response["statusCode"] = status_code
         elif path == '/get-subscription' and method == 'GET':
-            response["body"], response["statusCode"] = perform_get_subscription(data, DYNAMO_DB)
+            status_message, status_code = perform_get_subscription(data, DYNAMO_DB)
+            response["body"] = status_message
+            response["statusCode"] = status_code
         elif path == '/delete-subscription' and method == 'DELETE':
-            response["body"], response["statusCode"] = perform_delete_subscription(data, DYNAMO_DB)
+            status_message, status_code = perform_delete_subscription(data, DYNAMO_DB)
+            response["body"] = status_message
+            response["statusCode"] = status_code
         else:
             msg = '%s %s not allowed' % (method, path)
             response["statusCode"] = 405
