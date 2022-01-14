@@ -9,7 +9,7 @@ LOG.setLevel('DEBUG')
 
 DYNAMO_DB = os.environ['subscriberTable']
 
-dynamodb_client = boto3.resource('dynamodb')
+dynamodb_client = boto3.client('dynamodb')
 
 
 def lambda_handler(event, context):
