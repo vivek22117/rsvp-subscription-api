@@ -14,7 +14,6 @@ resource "aws_s3_bucket_object" "subscriber_api_package" {
   bucket = data.terraform_remote_state.s3_buckets.outputs.artifactory_s3_name
   key    = var.subscriber_api_lambda_bucket_key
   source = "${path.module}/lambda-package/lambda_processor.zip"
-  etag   = filemd5("${path.module}/lambda-package/lambda_processor.zip")
 }
 
 
