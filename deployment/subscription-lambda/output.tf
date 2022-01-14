@@ -2,8 +2,8 @@ output "lambda_arn" {
   value = module.rsvp_subscription_api.lambda_arn
 }
 
-output "api_url" {
-  value = module.rsvp_subscription_api.api_url
+output "domain_name" {
+  value = module.rsvp_subscription_api.domain_name
 }
 
 output "execution_arn" {
