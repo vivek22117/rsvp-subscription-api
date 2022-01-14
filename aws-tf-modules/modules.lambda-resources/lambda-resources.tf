@@ -1,6 +1,13 @@
 ############################################################
 #        Adding the lambda archive to the defined bucket   #
 ############################################################
+data "archive_file" "subscriber_api_package_zip" {
+  type        = "zip"
+  source_file = "${path.module}/../../subscription-api-lambda/lambda_processor.py"
+  output_path = "${path.module}/lambda-package/lambda_processor.zip"
+}
+
+
 resource "aws_s3_bucket_object" "subscriber_api_package" {
   depends_on = [data.archive_file.subscriber_api_package_zip]
 
@@ -10,11 +17,6 @@ resource "aws_s3_bucket_object" "subscriber_api_package" {
   etag   = filemd5("${path.module}/lambda-package/lambda_processor.zip")
 }
 
-data "archive_file" "subscriber_api_package_zip" {
-  type        = "zip"
-  source_file = "../../subscription-api-lambda/lambda_processor.py"
-  output_path = "${path.module}/lambda-package/lambda_processor.zip"
-}
 
 
 resource "aws_lambda_function" "subscriber_api_lambda" {
