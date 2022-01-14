@@ -56,7 +56,8 @@ resource "aws_iam_policy" "kinesis_lambda_policy" {
         "dynamodb:Query",
         "dynamodb:Scan",
         "dynamodb:PutItem",
-        "dynamodb:GetItem"
+        "dynamodb:GetItem",
+        "dynamodb:DeleteItem"
       ],
       "Resource": "${aws_dynamodb_table.subscriber_table.arn}"
     }
