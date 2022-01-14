@@ -11,15 +11,6 @@ variable "environment" {
   description = "Environment to deploy, Valid values 'qa', 'dev', 'prod'"
 }
 
-#################################
-#  Default Variables            #
-#################################
-variable "s3_bucket_prefix" {
-  type        = string
-  description = "S3 deployment bucket prefix"
-  default     = "doubledigit-tfstate"
-}
-
 
 #################################
 # Application Variables         #
@@ -109,7 +100,7 @@ variable "domain_name" {
 locals {
   common_tags = {
     owner       = "Vivek"
-    team        = "DoubleDigitTeam"
+    team        = "Learning-Team"
     environment = var.environment
   }
 }
