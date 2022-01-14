@@ -2,8 +2,8 @@ output "lambda_arn" {
   value = aws_lambda_function.subscriber_api_lambda.arn
 }
 
-output "domain_name" {
-  value = aws_api_gateway_base_path_mapping.api.domain_name
+output "invoke_url" {
+  value = aws_api_gateway_deployment.rsvp_api_deployment.invoke_url
 }
 
 output "execution_arn" {
