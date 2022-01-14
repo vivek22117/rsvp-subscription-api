@@ -10,6 +10,7 @@ LOG.setLevel('DEBUG')
 DYNAMO_DB = os.environ['subscriberTable']
 
 dynamodb_client = boto3.client('dynamodb')
+table = dynamodb.Table(DYNAMO_DB)
 
 
 def lambda_handler(event, context):
@@ -32,11 +33,10 @@ def lambda_handler(event, context):
 
         if path == '/add-subscription' and method == 'POST':
             response["body"], response["statusCode"] = perform_put_operation(data, DYNAMO_DB)
-        if path == '/get-subscription' and method == 'GET':
+        elif path == '/get-subscription' and method == 'GET':
             response["body"], response["statusCode"] = perform_get_subscription(data, DYNAMO_DB)
-        if path == '/delete-subscription' and method == 'DELETE':
+        elif path == '/delete-subscription' and method == 'DELETE':
             response["body"], response["statusCode"] = perform_delete_subscription(data, DYNAMO_DB)
-
         else:
             msg = '%s %s not allowed' % (method, path)
             response["statusCode"] = 405
@@ -66,8 +66,7 @@ def perform_put_operation(data, subscribers_table):
             'DataType': {'S': subscriber_dataType}
         }
 
-        response = dynamodb_client.put_item(
-            TableName=subscribers_table,
+        response = table.put_item(
             Item=item
         )
         LOG.debug(response)
