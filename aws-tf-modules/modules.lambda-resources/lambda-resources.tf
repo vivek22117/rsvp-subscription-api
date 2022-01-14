@@ -7,8 +7,6 @@ resource "null_resource" "trigger_new_deployment" {
   }
 }
 
-resource "random_uuid" "s3_path_uuid" {}
-
 
 data "archive_file" "subscriber_api_package_zip" {
   depends_on = [null_resource.trigger_new_deployment]
@@ -23,7 +21,7 @@ resource "aws_s3_bucket_object" "subscriber_api_package" {
   depends_on = [data.archive_file.subscriber_api_package_zip]
 
   bucket = data.terraform_remote_state.s3_buckets.outputs.artifactory_s3_name
-  key    = "${random_uuid.s3_path_uuid.result}/${var.subscriber_api_lambda_handler}"
+  key    = "${data.archive_file.subscriber_api_package_zip.output_base64sha256}/${var.subscriber_api_lambda_handler}"
   source = "${path.module}/lambda-package/lambda_processor.zip"
 }
 
@@ -51,7 +49,7 @@ resource "aws_lambda_function" "subscriber_api_lambda" {
     variables = {
       environment     = var.environment
       subscriberTable = aws_dynamodb_table.subscriber_table.name
-      S3KeyForPackage = "${random_uuid.s3_path_uuid.result}/${var.subscriber_api_lambda_handler}"
+      S3KeyForPackage = "${data.archive_file.subscriber_api_package_zip.output_base64sha256}/${var.subscriber_api_lambda_handler}"
     }
   }
 
