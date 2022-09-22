@@ -56,7 +56,7 @@ EOF
 ############################################
 resource "aws_api_gateway_rest_api" "rsvp_subscriber_api" {
   # The name of the REST API
-  name = "RSVPSubscriberAPI"
+  name = "RSVP-Subscriber-API"
 
   description = "REST API to add new RSVP Subscribers!"
 
@@ -434,6 +434,21 @@ resource "aws_api_gateway_deployment" "rsvp_api_deployment" {
 
   lifecycle {
     create_before_destroy = true
+  }
+}
+
+resource "aws_api_gateway_usage_plan" "example" {
+  name = "RSVP-Subscriber-API-Usage-Limit"
+
+  description = "Usage plan for Subscriber API"
+  api_stages {
+    api_id = aws_api_gateway_rest_api.rsvp_subscriber_api.id
+    stage  = aws_api_gateway_deployment.rsvp_api_deployment.stage_name
+  }
+
+  throttle_settings {
+    burst_limit = 500
+    rate_limit = 50.0
   }
 }
 
