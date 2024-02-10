@@ -17,6 +17,15 @@ resource "aws_iam_role" "k_lambda_k_role" {
   ]
 }
 EOF
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
+  tags = merge(var.common_tags, tomap({
+    "CreatedOn" = timestamp()
+    "Name"      = "${var.environment}-${var.component_name}-role"
+  }))
 }
 
 
@@ -64,6 +73,16 @@ resource "aws_iam_policy" "kinesis_lambda_policy" {
   ]
 }
 EOF
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
+  tags = merge(var.common_tags, tomap({
+    "CreatedOn" = timestamp()
+    "Name"      = "${var.environment}-${var.component_name}-policy"
+  }))
+
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_kinesis_policy_role_att" {

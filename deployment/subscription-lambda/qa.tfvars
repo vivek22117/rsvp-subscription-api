@@ -1,4 +1,5 @@
 default_region = "us-east-1"
+component_name = "subscriber-api"
 
 subscriber_api_lambda_bucket_key = "lambda-package/rsvp-subscriber/rsvp-subscriber-api.zip"
 subscriber_api_lambda_handler    = "lambda_processor.lambda_handler"
@@ -20,3 +21,13 @@ domain_name = "rsvp-subscription-api"
 
 lambda_memory  = "384"
 lambda_timeout = "60"
+
+common_tags = {
+  "Owner"      = "DD-Solutions"
+  "Team"       = "DevOps Team"
+  "Env"        = "qa"
+  "Monitoring" = "True"
+  "Project"    = "subscriber-api"
+  "Terraform"  = "True"
+  "Org"        = "DD-Solutions"
+}

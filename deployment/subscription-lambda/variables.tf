@@ -11,6 +11,11 @@ variable "environment" {
   description = "Environment to deploy, Valid values 'qa', 'dev', 'prod'"
 }
 
+variable "component_name" {
+  type        = string
+  description = "Component name for resources"
+}
+
 
 #################################
 # Application Variables         #
@@ -94,13 +99,12 @@ variable "domain_name" {
   type        = string
   description = "domain name for API Gateway"
 }
-####################################
-# Local variables                  #
-####################################
-locals {
-  common_tags = {
-    owner       = "Vivek"
-    team        = "Learning-Team"
-    environment = var.environment
+
+#####===============Tag variables==================#####
+variable "common_tags" {
+  type = map(string)
+  validation {
+    condition = alltrue([for t in ["Owner", "Team", "Env", "Monitoring", "Project", "Terraform", "Org", "CreatedOn"] : contains(keys(var.common_tags), t)])
+    error_message = "Please specify required tags, ['Owner', 'Team', 'Env', 'Monitoring', 'Project', 'Terraform', 'Org', 'CreatedOn']."
   }
 }

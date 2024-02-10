@@ -22,9 +22,19 @@ resource "aws_iam_role" "rsvp_processor_api_role" {
   ]
 }
 EOF
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
+  tags = merge(var.common_tags, tomap({
+    "CreatedOn" = timestamp()
+    "Name"      = "${var.environment}-${var.component_name}-gateway-role"
+  }))
+
 }
 
-resource "aws_iam_role_policy" "email_processor_policy" {
+resource "aws_iam_role_policy" "api_gateway_policy" {
   name = "RSVPSubscriberAPIGatewayPolicy"
   role = aws_iam_role.rsvp_processor_api_role.id
 
@@ -48,6 +58,15 @@ resource "aws_iam_role_policy" "email_processor_policy" {
     ]
 }
 EOF
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
+  tags = merge(var.common_tags, tomap({
+    "CreatedOn" = timestamp()
+    "Name"      = "${var.environment}-${var.component_name}-gateway-policy"
+  }))
 }
 
 

@@ -23,5 +23,12 @@ resource "aws_dynamodb_table" "subscriber_table" {
     type = "S"
   }
 
-  tags = merge(local.common_tags, map("Name", "subscriber-dynamoDB"))
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
+  tags = merge(var.common_tags, tomap({
+    "CreatedOn" = timestamp()
+    "Name"      = "${var.environment}-${var.component_name}"
+  }))
 }
