@@ -16,7 +16,7 @@ on:
         description: 'qa or test or prod'
 
 env:
-  tf_version: '0.13.5'
+  tf_version: '1.5.7'
   tf_working_dir_app: './deployment/subscription-lambda/'
   aws_region: 'us-east-1'
   environment: ${{ github.event.inputs.env }}
@@ -60,7 +60,7 @@ jobs:
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init For Subscriber Lambda
         uses: hashicorp/terraform-github-actions@master
